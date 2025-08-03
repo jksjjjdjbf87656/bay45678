@@ -155,10 +155,14 @@ export default function EnhancedPostCard({ post, onPostDeleted }) {
     
     if (confirm('Are you sure you want to delete this post?')) {
       try {
-        await deleteDoc(doc(db, 'posts', post.id));
+        // Immediately call onPostDeleted for instant UI update
         if (onPostDeleted) onPostDeleted(post.id);
+        
+        await deleteDoc(doc(db, 'posts', post.id));
       } catch (error) {
         console.error('Error deleting post:', error);
+        // If deletion failed, we might want to revert the UI change
+        // For now, we'll just log the error
       }
     }
   };

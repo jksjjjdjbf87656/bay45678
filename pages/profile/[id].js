@@ -16,6 +16,7 @@ export default function Profile() {
   const [userData, setUserData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [postsLoading, setPostsLoading] = useState(true);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   useEffect(() => {
@@ -32,12 +33,15 @@ export default function Profile() {
         const userDoc = await getDoc(doc(db, 'users', id));
         if (userDoc.exists()) {
           setUserData(userDoc.data());
+          setLoading(false);
         } else {
           // User not found
+          setLoading(false);
           router.push('/');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
+        setLoading(false);
         router.push('/');
       }
     };
@@ -59,12 +63,16 @@ export default function Profile() {
         }));
         
         setPosts(postsData);
-        setLoading(false);
+        setPostsLoading(false);
       } catch (error) {
         console.error('Error fetching posts:', error);
         setPosts([]);
-        setLoading(false);
+        setPostsLoading(false);
       }
+    }, (error) => {
+      console.error('Error in posts listener:', error);
+      setPosts([]);
+      setPostsLoading(false);
     });
 
     // Cleanup subscription on unmount
@@ -72,7 +80,8 @@ export default function Profile() {
   }, [id, user, router]);
 
   const handlePostDeleted = (postId) => {
-    // The real-time listener will automatically update the posts
+    // Immediately remove the post from the local state for instant UI update
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
   };
 
   if (loading) {
@@ -119,11 +128,15 @@ export default function Profile() {
               {isOwnProfile ? 'Your Posts' : `${userData.name}'s Posts`}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+              {postsLoading ? 'Loading posts...' : `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`}
             </p>
           </div>
 
-          {posts.length === 0 ? (
+          {postsLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </div>
+          ) : posts.length === 0 ? (
             <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
               <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">

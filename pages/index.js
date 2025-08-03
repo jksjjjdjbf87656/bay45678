@@ -47,13 +47,13 @@ export default function Home() {
   }, []);
 
   const handlePostCreated = (newPost) => {
-    // The real-time listener will automatically update the posts
-    // This is just for immediate UI feedback if needed
+    // Add the new post immediately to the top of the list for instant feedback
+    setPosts(prevPosts => [newPost, ...prevPosts]);
   };
 
   const handlePostDeleted = (postId) => {
-    // The real-time listener will automatically update the posts
-    // This is just for immediate UI feedback if needed
+    // Remove the post immediately from the list for instant feedback
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
   };
 
   if (loading) {

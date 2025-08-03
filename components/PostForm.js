@@ -32,7 +32,15 @@ export default function PostForm({ user, userData, onPostCreated }) {
       setContent('');
       setShowOptions(false);
       if (onPostCreated) {
-        onPostCreated({ ...postData, id: docRef.id, createdAt: new Date() });
+        // Create the post object with the new ID and current timestamp
+        const newPost = { 
+          ...postData, 
+          id: docRef.id, 
+          createdAt: new Date(),
+          likes: 0,
+          likedBy: []
+        };
+        onPostCreated(newPost);
       }
     } catch (error) {
       console.error('Error creating post:', error);
