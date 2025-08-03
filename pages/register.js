@@ -46,7 +46,10 @@ export default function Register() {
     const result = await registerUser(formData.email, formData.password, formData.name);
     
     if (result.success) {
-      router.push('/');
+      // Wait a moment for auth state to update, then redirect to home
+      setTimeout(() => {
+        router.push('/');
+      }, 100);
     } else {
       setError(result.error);
     }

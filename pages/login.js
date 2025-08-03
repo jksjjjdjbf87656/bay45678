@@ -31,7 +31,10 @@ export default function Login() {
     const result = await loginUser(formData.email, formData.password);
     
     if (result.success) {
-      router.push('/');
+      // Wait a moment for auth state to update, then redirect to home
+      setTimeout(() => {
+        router.push('/');
+      }, 100);
     } else {
       setError(result.error);
     }

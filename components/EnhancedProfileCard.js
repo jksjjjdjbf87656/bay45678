@@ -154,9 +154,11 @@ export default function EnhancedProfileCard({ userData, isOwnProfile, userId }) 
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               {userData?.name || 'Anonymous User'}
             </h1>
-            <p className="text-blue-600 dark:text-blue-400 font-medium">
-              {userData?.title || 'Professional'}
-            </p>
+            {userData?.title && (
+              <p className="text-blue-600 dark:text-blue-400 font-medium">
+                {userData.title}
+              </p>
+            )}
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               {userData?.email}
             </p>

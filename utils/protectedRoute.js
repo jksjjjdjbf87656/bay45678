@@ -25,7 +25,11 @@ export const withAuth = (WrappedComponent) => {
 
     useEffect(() => {
       if (!loading && !user) {
-        router.push('/login');
+        // Add a small delay to prevent redirect loops
+        const timer = setTimeout(() => {
+          router.push('/login');
+        }, 100);
+        return () => clearTimeout(timer);
       }
     }, [user, loading, router]);
 
